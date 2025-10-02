@@ -1,26 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import { AuthProvider } from "./context/AuthContext";
 
-function App() {
+import Header from "./components/Header";
+import Home from "./pages/Homes";
+import Login from "./pages/Login";
+import PrivateRoute from "./components/PrivateRoute";
+
+import Admin from "./pages/Admin";
+import NewsDetail from "./components/NewsDetail";
+
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <AuthProvider>
+        <Toaster position="top-right" />
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <Header />
+                <Home />
+              </>
+            }
+          />
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/news/:id"
+            element={
+              <>
+                <Header />
+                <NewsDetail />
+              </>
+            }
+          />
+
+          {/* Rotas admin */}
+          <Route
+            path="/admin/*" // permite todas as subrotas do Admin
+            element={
+              <PrivateRoute>
+                <Admin />
+              </PrivateRoute>
+            }
+          />
+        </Routes>
+      </AuthProvider>
+    </Router>
   );
 }
-
-export default App;
