@@ -24,15 +24,20 @@ export default function Home() {
   const [selectedCity, setSelectedCity] = useState<number | "">("");
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
+  const [ads, setAds] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch("http://localhost:4000/publicidade")
+      .then((res) => res.json())
+      .then((data) => setAds(Array.isArray(data) ? data : []))
+      .catch((err) => console.error("Erro ao carregar publicidades:", err));
+  }, []);
 
   // Carregar notícias
   useEffect(() => {
     fetch("http://localhost:4000/news")
       .then((res) => res.json())
-      .then((data) => {
-        console.log("Dados da API:", data); // Debug
-        setNoticias(Array.isArray(data) ? data : []);
-      })
+      .then((data) => setNoticias(Array.isArray(data) ? data : []))
       .catch((err) => console.error("Erro ao carregar notícias:", err));
   }, []);
 
@@ -44,7 +49,7 @@ export default function Home() {
       .catch((err) => console.error("Erro ao carregar regiões:", err));
   }, []);
 
-  // Carregar cidades quando a região muda
+  // Carregar cidades conforme a região
   useEffect(() => {
     if (selectedRegion) {
       fetch(`http://localhost:4000/cities?region_id=${selectedRegion}`)
@@ -58,7 +63,7 @@ export default function Home() {
     }
   }, [selectedRegion]);
 
-  // Notícias filtradas localmente
+  // Filtro de notícias
   const noticiasFiltradas = Array.isArray(noticias)
     ? noticias.filter((n) => {
         const filtroTexto =
@@ -90,96 +95,173 @@ export default function Home() {
       })
     : [];
 
+  // Ordenar por data
+  const noticiasOrdenadas = [...noticiasFiltradas].sort(
+    (a, b) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
+
+  const principais = noticiasOrdenadas.slice(0, 3);
+  const restantes = noticiasOrdenadas.slice(3);
+
   return (
-    <div className="flex flex-col min-h-screen">
-      <main className="flex-grow max-w-6xl mx-auto p-8">
-        {/* Filtros */}
-        <div className="mb-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <input
-            type="text"
-            placeholder="Buscar notícias..."
-            value={busca}
-            onChange={(e) => setBusca(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
-          />
+    <div className="flex flex-col min-h-screen bg-white">
+      <main className="flex-grow max-w-6xl mx-auto p-6">
+        {/* === FILTROS === */}
+        <div className="bg-gray-100 p-4 rounded-xl mb-8 shadow-sm">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <select
+              value={selectedRegion}
+              onChange={(e) =>
+                setSelectedRegion(e.target.value ? Number(e.target.value) : "")
+              }
+              className="p-2 rounded-md border border-gray-300"
+            >
+              <option value="">Todas as regiões</option>
+              {regions.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.name}
+                </option>
+              ))}
+            </select>
 
-          <select
-            value={selectedRegion}
-            onChange={(e) =>
-              setSelectedRegion(e.target.value ? Number(e.target.value) : "")
-            }
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
-          >
-            <option value="">Todas as regiões</option>
-            {regions.map((r) => (
-              <option key={r.id} value={r.id}>
-                {r.name}
-              </option>
-            ))}
-          </select>
+            <select
+              value={selectedCity}
+              onChange={(e) =>
+                setSelectedCity(e.target.value ? Number(e.target.value) : "")
+              }
+              disabled={!selectedRegion}
+              className="p-2 rounded-md border border-gray-300"
+            >
+              <option value="">Todas as cidades</option>
+              {cities.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
 
-          <select
-            value={selectedCity}
-            onChange={(e) =>
-              setSelectedCity(e.target.value ? Number(e.target.value) : "")
-            }
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
-            disabled={!selectedRegion || cities.length === 0}
-          >
-            <option value="">Todas as cidades</option>
-            {cities.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-
-          <div className="flex gap-2">
             <input
               type="date"
               value={dataInicio}
               onChange={(e) => setDataInicio(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              className="p-2 rounded-md border border-gray-300"
             />
+
             <input
               type="date"
               value={dataFim}
               onChange={(e) => setDataFim(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              className="p-2 rounded-md border border-gray-300"
             />
+
+            <button
+              onClick={() => {
+                setSelectedCity("");
+                setSelectedRegion("");
+                setDataInicio("");
+                setDataFim("");
+                setBusca("");
+              }}
+              className="bg-black text-white rounded-md p-2 font-semibold hover:bg-gray-800"
+            >
+              Limpar filtros
+            </button>
           </div>
         </div>
 
-        {/* Filtro rápido por categoria */}
-        <div className="mb-6 flex flex-wrap gap-3">
-          {[
-            "Tecnologia",
-            "Saúde",
-            "Crimes",
-            "Política",
-            "Esportes",
-            "Entretenimento",
-            "Economia",
-          ].map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setBusca(cat)}
-              className="px-4 py-2 bg-yellow-500 text-white font-semibold rounded-full hover:bg-yellow-600 transition"
+        {/* === DESTAQUES === */}
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          {principais.length > 0 && (
+            <>
+              <div className="lg:col-span-2 relative rounded-xl overflow-hidden shadow-md">
+                <img
+                  src={`http://localhost:4000/${
+                    principais[0].images?.[0] || ""
+                  }`}
+                  alt={principais[0].title}
+                  className="w-full h-96 object-cover"
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end p-6">
+                  <h2 className="text-3xl font-bold text-white leading-snug">
+                    {principais[0].title}
+                  </h2>
+                  <p className="text-yellow-400 text-sm font-semibold mt-2">
+                    {principais[0].category}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-6">
+                {principais.slice(1, 3).map((n) => (
+                  <div
+                    key={n.id}
+                    className="relative rounded-xl overflow-hidden shadow-md h-44"
+                  >
+                    <img
+                      src={`http://localhost:4000/${n.images?.[0] || ""}`}
+                      alt={n.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end p-4">
+                      <h3 className="text-white text-base font-bold leading-tight">
+                        {n.title}
+                      </h3>
+                      <p className="text-yellow-400 text-xs font-semibold">
+                        {n.category}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </section>
+
+        {/* === CONTEÚDO PRINCIPAL + SIDEBAR === */}
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Coluna principal: NewsList */}
+          <div className="lg:col-span-2">
+            <NewsList noticias={restantes} />
+          </div>
+
+          {/* Coluna Sidebar */}
+          <div className="lg:col-span-1">
+            <Sidebar noticias={noticiasOrdenadas} />
+          </div>
+        </section>
+      </main>
+
+      {/* === PUBLICIDADES NO FIM DA PÁGINA (estilo galeria) === */}
+      <section className="max-w-6xl mx-auto mt-10 px-6">
+        <div className="flex items-center space-x-4 border-b border-gray-300 pb-2 mb-4">
+          <span className="text-gray-700 font-semibold cursor-pointer">
+            Publicidade
+          </span>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {ads.map((ad) => (
+            <a
+              key={ad.id}
+              href={ad.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block rounded-md overflow-hidden shadow-md"
             >
-              {cat}
-            </button>
+              <img
+                src={`http://localhost:4000/${ad.image_url}`}
+                alt={ad.title}
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-2 bg-white">
+                <p className="text-sm font-semibold text-gray-800">
+                  {ad.title}
+                </p>
+              </div>
+            </a>
           ))}
         </div>
-
-        {/* Lista de notícias */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="overflow-auto max-h-[calc(100vh-10rem)] lg:col-span-2">
-            <NewsList noticias={noticiasFiltradas} />
-          </div>
-
-          <Sidebar noticias={noticiasFiltradas} />
-        </div>
-      </main>
+      </section>
 
       <Footer />
     </div>

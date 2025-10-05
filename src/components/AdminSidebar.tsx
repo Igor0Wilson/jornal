@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Newspaper, MapPin, Layers, User, LogOut } from "lucide-react";
+import { Newspaper, MapPin, Layers, User, LogOut, Globe } from "lucide-react";
 
 interface AdminSidebarProps {
   setView: (view: string) => void;
@@ -23,8 +23,9 @@ export default function AdminSidebarLucide({
   const menuItems: MenuItem[] = [
     { name: "Notícias", icon: Newspaper, view: "news" },
     { name: "Cidades", icon: MapPin, view: "cities" },
-    { name: "Regiões", icon: Layers, view: "regions" },
+    { name: "Regiões", icon: Globe, view: "regions" },
     { name: "Usuários", icon: User, view: "users" },
+    { name: "Publicidade", icon: Layers, view: "ads" },
   ];
 
   return (

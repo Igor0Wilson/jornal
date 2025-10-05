@@ -23,44 +23,54 @@ export default function SidebarModern({ noticias }: SidebarProps) {
     .slice(0, 5);
 
   return (
-    <aside className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-      <ol className="flex flex-col gap-5">
-        {maisRecentes.map((noticia, i) => (
-          <li
-            key={noticia.id}
-            className="flex gap-3 items-start hover:bg-yellow-50 p-2 rounded-lg transition-all"
-          >
-            {/* Número com fundo circular */}
-            <span className="bg-yellow-500 text-white w-10 h-10 flex items-center justify-center font-bold rounded-full flex-shrink-0 shadow-md">
-              {i + 1}
-            </span>
-
-            <div className="flex-1 flex flex-col gap-1">
-              {/* Título clicável */}
-              <Link
-                to={`/news/${noticia.id}`}
-                className="text-sm font-semibold text-gray-800 hover:text-yellow-600 transition-colors"
+    // Container principal do sidebar com sticky para fixar no scroll
+    <aside className="w-full lg:w-80">
+      <div className="sticky top-4">
+        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+          <h3 className="text-lg font-bold text-gray-800 mb-4">
+            Mais Recentes
+          </h3>
+          <ol className="flex flex-col gap-5">
+            {maisRecentes.map((noticia, i) => (
+              <li
+                key={noticia.id}
+                className="flex gap-3 items-start hover:bg-yellow-50 p-2 rounded-lg transition-all"
               >
-                {noticia.title}
-              </Link>
+                {/* Número com fundo circular */}
+                <span className="bg-yellow-500 text-white w-10 h-10 flex items-center justify-center font-bold rounded-full flex-shrink-0 shadow-md">
+                  {i + 1}
+                </span>
 
-              {/* Categoria e data com ícones */}
-              <div className="flex items-center gap-4 text-xs text-gray-500">
-                <div className="flex items-center gap-1">
-                  <Tag size={14} />
-                  <span>{noticia.category}</span>
+                <div className="flex-1 flex flex-col gap-1">
+                  {/* Título clicável */}
+                  <Link
+                    to={`/news/${noticia.id}`}
+                    className="text-sm font-semibold text-gray-800 hover:text-yellow-600 transition-colors"
+                  >
+                    {noticia.title}
+                  </Link>
+
+                  {/* Categoria e data com ícones */}
+                  <div className="flex items-center gap-4 text-xs text-gray-500">
+                    <div className="flex items-center gap-1">
+                      <Tag size={14} />
+                      <span>{noticia.category}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Clock size={14} />
+                      <span>
+                        {new Date(noticia.created_at).toLocaleDateString(
+                          "pt-BR"
+                        )}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Clock size={14} />
-                  <span>
-                    {new Date(noticia.created_at).toLocaleDateString("pt-BR")}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </li>
-        ))}
-      </ol>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
     </aside>
   );
 }

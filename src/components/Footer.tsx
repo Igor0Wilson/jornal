@@ -23,11 +23,17 @@ const Footer: React.FC = () => {
 
       <div className="flex justify-center items-center gap-2">
         <span className="text-sm">Desenvolvido por</span>
-        <img
-          src={logoOrg}
-          alt="WSS Solution Logo"
-          className="h-8 w-8 rounded-full object-cover border border-gray-200 p-1"
-        />
+        <a
+          href="https://wa.me/5514996743858?text=Olá%20gostaria%20de%20contratar%20seus%20serviços"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            src={logoOrg}
+            alt="WSS Solution Logo"
+            className="h-8 w-8 rounded-full object-cover border border-gray-200 p-1 cursor-pointer"
+          />
+        </a>
       </div>
     </footer>
   );
