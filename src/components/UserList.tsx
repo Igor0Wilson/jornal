@@ -26,7 +26,7 @@ export default function UserList() {
   }, []);
 
   const fetchUsers = () => {
-    fetch("http://api_jornal.railway.internal:4000/users")
+    fetch("https://apijornal-production.up.railway.app/users")
       .then((res) => res.json())
       .then((data) => setUsers(data))
       .catch((err) => console.error("Erro ao carregar usuários:", err));
@@ -34,11 +34,14 @@ export default function UserList() {
 
   const onSubmit = async (data: UserFormValues) => {
     try {
-      const res = await fetch("http://api_jornal.railway.internal:4000/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      const res = await fetch(
+        "https://apijornal-production.up.railway.app/users",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        }
+      );
 
       if (!res.ok) throw new Error("Erro ao criar usuário");
 
@@ -55,7 +58,7 @@ export default function UserList() {
 
     try {
       const res = await fetch(
-        `http://api_jornal.railway.internal:4000/users/${userToDelete}`,
+        `https://apijornal-production.up.railway.app/users/${userToDelete}`,
         {
           method: "DELETE",
         }

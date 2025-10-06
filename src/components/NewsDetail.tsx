@@ -18,7 +18,7 @@ export default function NewsDetail() {
   const [noticia, setNoticia] = useState<Noticia | null>(null);
 
   useEffect(() => {
-    fetch(`http://api_jornal.railway.internal:4000/news/${id}`)
+    fetch(`https://apijornal-production.up.railway.app/news/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setNoticia(Array.isArray(data) ? data[0] : data);
@@ -50,7 +50,7 @@ export default function NewsDetail() {
       {/* Imagem principal completa */}
       <div className="mb-6">
         <img
-          src={`http://api_jornal.railway.internal:4000/${imagemPrincipal}`}
+          src={`https://apijornal-production.up.railway.app/${imagemPrincipal}`}
           alt={noticia.title}
           className="w-full rounded-lg object-contain"
         />
@@ -68,7 +68,7 @@ export default function NewsDetail() {
           {imagensMenores.map((img, i) => (
             <img
               key={i}
-              src={`http://api_jornal.railway.internal:4000/${img}`}
+              src={`https://apijornal-production.up.railway.app/${img}`}
               alt={`Imagem ${i + 1}`}
               className="w-36 h-24 rounded-md object-cover flex-shrink-0 cursor-pointer hover:scale-105 transition-transform"
             />

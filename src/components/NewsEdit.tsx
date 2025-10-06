@@ -39,7 +39,7 @@ export default function NewsEdit({
     const fetchNews = async () => {
       try {
         const res = await fetch(
-          `http://api_jornal.railway.internal:4000/news/${id}`
+          `https://apijornal-production.up.railway.app/news/${id}`
         );
         const data: NewsData = await res.json();
         setForm({ ...data, images: [] });
@@ -90,7 +90,7 @@ export default function NewsEdit({
     existingImages.forEach((img) => data.append("existingImages", img));
 
     try {
-      await fetch(`http://api_jornal.railway.internal:4000/news/${id}`, {
+      await fetch(`https://apijornal-production.up.railway.app/news/${id}`, {
         method: "PUT",
         body: data,
       });
@@ -163,7 +163,7 @@ export default function NewsEdit({
               {existingImages.map((img, idx) => (
                 <div key={idx} className="relative">
                   <img
-                    src={`http://api_jornal.railway.internal:4000/${img}`}
+                    src={`https://apijornal-production.up.railway.app/${img}`}
                     alt={`imagem ${idx}`}
                     className="w-32 h-32 object-cover rounded"
                   />

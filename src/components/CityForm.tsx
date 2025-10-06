@@ -30,13 +30,13 @@ export default function CityForm() {
   }, []);
 
   const fetchCities = () => {
-    fetch("http://api_jornal.railway.internal:4000/cities")
+    fetch("https://apijornal-production.up.railway.app/cities")
       .then((res) => res.json())
       .then((data) => setCities(data));
   };
 
   const fetchRegions = () => {
-    fetch("http://api_jornal.railway.internal:4000/regions")
+    fetch("https://apijornal-production.up.railway.app/regions")
       .then((res) => res.json())
       .then((data) => setRegions(data));
   };
@@ -44,7 +44,7 @@ export default function CityForm() {
   const onSubmit = async (data: CityFormValues) => {
     try {
       const res = await fetch(
-        "http://api_jornal.railway.internal:4000/cities",
+        "https://apijornal-production.up.railway.app/cities",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -64,7 +64,7 @@ export default function CityForm() {
     if (cityToDelete === null) return;
     try {
       const res = await fetch(
-        `http://api_jornal.railway.internal:4000/cities/${cityToDelete}`,
+        `https://apijornal-production.up.railway.app/cities/${cityToDelete}`,
         {
           method: "DELETE",
         }

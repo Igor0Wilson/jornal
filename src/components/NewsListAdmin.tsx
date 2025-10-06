@@ -8,7 +8,7 @@ export default function NewsListAdmin() {
   const [newsToDelete, setNewsToDelete] = useState<number | null>(null);
 
   const fetchNews = () => {
-    fetch("http://api_jornal.railway.internal:4000/api/news")
+    fetch("https://apijornal-production.up.railway.app/api/news")
       .then((res) => res.json())
       .then((data) => setNews(data));
   };
@@ -22,7 +22,7 @@ export default function NewsListAdmin() {
 
     try {
       const res = await fetch(
-        `http://api_jornal.railway.internal:4000/api/news/${newsToDelete}`,
+        `https://apijornal-production.up.railway.app/api/news/${newsToDelete}`,
         { method: "DELETE" }
       );
       if (!res.ok) throw new Error("Erro ao deletar notícia");
@@ -75,7 +75,7 @@ export default function NewsListAdmin() {
                 <td className="px-4 py-2">
                   {n.images && n.images.length > 0 ? (
                     <img
-                      src={`http://api_jornal.railway.internal:4000/${n.images[0]}`}
+                      src={`https://apijornal-production.up.railway.app/${n.images[0]}`}
                       alt={n.title}
                       className="w-20 h-20 object-cover rounded"
                     />

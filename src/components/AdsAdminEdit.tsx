@@ -21,7 +21,7 @@ export default function AdsAdminEdit({
 
   const [preview, setPreview] = useState<string>(
     ad.image_url
-      ? `http://api_jornal.railway.internal:4000/${ad.image_url}`
+      ? `https://apijornal-production.up.railway.app/${ad.image_url}`
       : ""
   );
 
@@ -49,7 +49,7 @@ export default function AdsAdminEdit({
 
     try {
       await fetch(
-        `http://api_jornal.railway.internal:4000/publicidade/${ad.id}`,
+        `https://apijornal-production.up.railway.app/publicidade/${ad.id}`,
         {
           method: "PUT",
           body: data,

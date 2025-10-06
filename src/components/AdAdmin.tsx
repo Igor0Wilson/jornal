@@ -23,7 +23,7 @@ export default function AdsAdmin() {
   const fetchAds = async () => {
     try {
       const res = await fetch(
-        "http://api_jornal.railway.internal:4000/publicidade"
+        "https://apijornal-production.up.railway.app/publicidade"
       );
       const data = await res.json();
       setAds(Array.isArray(data) ? data : data.rows);
@@ -59,8 +59,8 @@ export default function AdsAdmin() {
 
     const method = editingId ? "PUT" : "POST";
     const url = editingId
-      ? `http://api_jornal.railway.internal:4000/publicidade/${editingId}`
-      : "http://api_jornal.railway.internal:4000/publicidade";
+      ? `https://apijornal-production.up.railway.app/publicidade/${editingId}`
+      : "https://apijornal-production.up.railway.app/publicidade";
 
     await fetch(url, { method, body: data });
     setForm({ title: "", link: "", priority: 0, active: true, image: null });
@@ -75,7 +75,7 @@ export default function AdsAdmin() {
   const handleDelete = async () => {
     if (!confirmDelete.id) return;
     await fetch(
-      `http://api_jornal.railway.internal:4000/publicidade/${confirmDelete.id}`,
+      `https://apijornal-production.up.railway.app/publicidade/${confirmDelete.id}`,
       {
         method: "DELETE",
       }
@@ -179,12 +179,12 @@ export default function AdsAdmin() {
             <div className="flex items-center gap-3">
               {ad.image_url ? (
                 <img
-                  src={`http://api_jornal.railway.internal:4000/${ad.image_url}`}
+                  src={`https://apijornal-production.up.railway.app/${ad.image_url}`}
                   alt={ad.title}
                   className="w-20 h-20 object-cover rounded"
                   onClick={() =>
                     setModalImage(
-                      `http://api_jornal.railway.internal:4000/${ad.image_url}`
+                      `https://apijornal-production.up.railway.app/${ad.image_url}`
                     )
                   }
                 />

@@ -28,7 +28,9 @@ export default function NewsAdmin() {
   // --- Fetchers ---
   const fetchNews = async () => {
     try {
-      const res = await fetch("http://api_jornal.railway.internal:4000/news");
+      const res = await fetch(
+        "https://apijornal-production.up.railway.app/news"
+      );
       const data = await res.json();
       const rows = Array.isArray(data) ? data : data.rows;
 
@@ -44,13 +46,17 @@ export default function NewsAdmin() {
   };
 
   const fetchCities = async () => {
-    const res = await fetch("http://api_jornal.railway.internal:4000/cities");
+    const res = await fetch(
+      "https://apijornal-production.up.railway.app/cities"
+    );
     const data = await res.json();
     setCities(Array.isArray(data) ? data : data.rows);
   };
 
   const fetchRegions = async () => {
-    const res = await fetch("http://api_jornal.railway.internal:4000/regions");
+    const res = await fetch(
+      "https://apijornal-production.up.railway.app/regions"
+    );
     const data = await res.json();
     setRegions(Array.isArray(data) ? data : data.rows);
   };
@@ -88,7 +94,7 @@ export default function NewsAdmin() {
     data.append("city_id", form.city_id);
     form.images.forEach((img) => data.append("images", img));
 
-    await fetch("http://api_jornal.railway.internal:4000/news", {
+    await fetch("https://apijornal-production.up.railway.app/news", {
       method: "POST",
       body: data,
     });
@@ -102,7 +108,7 @@ export default function NewsAdmin() {
   const handleDelete = async () => {
     if (!confirmDelete.id) return;
     await fetch(
-      `http://api_jornal.railway.internal:4000/news/${confirmDelete.id}`,
+      `https://apijornal-production.up.railway.app/news/${confirmDelete.id}`,
       {
         method: "DELETE",
       }
@@ -233,12 +239,12 @@ export default function NewsAdmin() {
               <div className="flex items-center gap-3">
                 {firstImage ? (
                   <img
-                    src={`http://api_jornal.railway.internal:4000/${firstImage}`}
+                    src={`https://apijornal-production.up.railway.app/${firstImage}`}
                     alt={n.title}
                     className="w-20 h-20 object-cover rounded"
                     onClick={() =>
                       setModalImage(
-                        `http://api_jornal.railway.internal:4000/${firstImage}`
+                        `https://apijornal-production.up.railway.app/${firstImage}`
                       )
                     }
                   />

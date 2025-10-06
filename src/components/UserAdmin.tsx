@@ -5,7 +5,7 @@ export default function UserAdmin() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
 
   const fetchUsers = () => {
-    fetch("http://api_jornal.railway.internal:4000/users")
+    fetch("https://apijornal-production.up.railway.app/users")
       .then((res) => res.json())
       .then((data) => setUsers(data));
   };
@@ -20,7 +20,7 @@ export default function UserAdmin() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await fetch("http://api_jornal.railway.internal:4000/users/addUser", {
+    await fetch("https://apijornal-production.up.railway.app/users/addUser", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
@@ -30,7 +30,7 @@ export default function UserAdmin() {
   };
 
   const handleDelete = async (id: number) => {
-    await fetch(`http://api_jornal.railway.internal:4000/users/${id}`, {
+    await fetch(`https://apijornal-production.up.railway.app/users/${id}`, {
       method: "DELETE",
     });
     fetchUsers();
