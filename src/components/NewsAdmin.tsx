@@ -28,7 +28,7 @@ export default function NewsAdmin() {
   // --- Fetchers ---
   const fetchNews = async () => {
     try {
-      const res = await fetch("http://localhost:4000/news");
+      const res = await fetch("http://api_jornal.railway.internal:4000/news");
       const data = await res.json();
       const rows = Array.isArray(data) ? data : data.rows;
 
@@ -44,13 +44,13 @@ export default function NewsAdmin() {
   };
 
   const fetchCities = async () => {
-    const res = await fetch("http://localhost:4000/cities");
+    const res = await fetch("http://api_jornal.railway.internal:4000/cities");
     const data = await res.json();
     setCities(Array.isArray(data) ? data : data.rows);
   };
 
   const fetchRegions = async () => {
-    const res = await fetch("http://localhost:4000/regions");
+    const res = await fetch("http://api_jornal.railway.internal:4000/regions");
     const data = await res.json();
     setRegions(Array.isArray(data) ? data : data.rows);
   };
@@ -88,7 +88,10 @@ export default function NewsAdmin() {
     data.append("city_id", form.city_id);
     form.images.forEach((img) => data.append("images", img));
 
-    await fetch("http://localhost:4000/news", { method: "POST", body: data });
+    await fetch("http://api_jornal.railway.internal:4000/news", {
+      method: "POST",
+      body: data,
+    });
     fetchNews();
     setForm({ title: "", content: "", category: "", city_id: "", images: [] });
     setPreviews([]);
@@ -98,9 +101,12 @@ export default function NewsAdmin() {
     setConfirmDelete({ id, title });
   const handleDelete = async () => {
     if (!confirmDelete.id) return;
-    await fetch(`http://localhost:4000/news/${confirmDelete.id}`, {
-      method: "DELETE",
-    });
+    await fetch(
+      `http://api_jornal.railway.internal:4000/news/${confirmDelete.id}`,
+      {
+        method: "DELETE",
+      }
+    );
     setConfirmDelete({ id: null, title: "" });
     fetchNews();
   };
@@ -227,11 +233,13 @@ export default function NewsAdmin() {
               <div className="flex items-center gap-3">
                 {firstImage ? (
                   <img
-                    src={`http://localhost:4000/${firstImage}`}
+                    src={`http://api_jornal.railway.internal:4000/${firstImage}`}
                     alt={n.title}
                     className="w-20 h-20 object-cover rounded"
                     onClick={() =>
-                      setModalImage(`http://localhost:4000/${firstImage}`)
+                      setModalImage(
+                        `http://api_jornal.railway.internal:4000/${firstImage}`
+                      )
                     }
                   />
                 ) : (

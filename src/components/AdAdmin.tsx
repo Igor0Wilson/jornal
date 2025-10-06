@@ -22,7 +22,9 @@ export default function AdsAdmin() {
   // --- Fetch Ads ---
   const fetchAds = async () => {
     try {
-      const res = await fetch("http://localhost:4000/publicidade");
+      const res = await fetch(
+        "http://api_jornal.railway.internal:4000/publicidade"
+      );
       const data = await res.json();
       setAds(Array.isArray(data) ? data : data.rows);
     } catch (err) {
@@ -57,8 +59,8 @@ export default function AdsAdmin() {
 
     const method = editingId ? "PUT" : "POST";
     const url = editingId
-      ? `http://localhost:4000/publicidade/${editingId}`
-      : "http://localhost:4000/publicidade";
+      ? `http://api_jornal.railway.internal:4000/publicidade/${editingId}`
+      : "http://api_jornal.railway.internal:4000/publicidade";
 
     await fetch(url, { method, body: data });
     setForm({ title: "", link: "", priority: 0, active: true, image: null });
@@ -72,9 +74,12 @@ export default function AdsAdmin() {
 
   const handleDelete = async () => {
     if (!confirmDelete.id) return;
-    await fetch(`http://localhost:4000/publicidade/${confirmDelete.id}`, {
-      method: "DELETE",
-    });
+    await fetch(
+      `http://api_jornal.railway.internal:4000/publicidade/${confirmDelete.id}`,
+      {
+        method: "DELETE",
+      }
+    );
     setConfirmDelete({ id: null, title: "" });
     fetchAds();
   };
@@ -174,11 +179,13 @@ export default function AdsAdmin() {
             <div className="flex items-center gap-3">
               {ad.image_url ? (
                 <img
-                  src={`http://localhost:4000/${ad.image_url}`}
+                  src={`http://api_jornal.railway.internal:4000/${ad.image_url}`}
                   alt={ad.title}
                   className="w-20 h-20 object-cover rounded"
                   onClick={() =>
-                    setModalImage(`http://localhost:4000/${ad.image_url}`)
+                    setModalImage(
+                      `http://api_jornal.railway.internal:4000/${ad.image_url}`
+                    )
                   }
                 />
               ) : (

@@ -17,18 +17,21 @@ export default function RegionForm() {
   }, []);
 
   const fetchRegions = () => {
-    fetch("http://localhost:4000/regions")
+    fetch("http://api_jornal.railway.internal:4000/regions")
       .then((res) => res.json())
       .then((data) => setRegions(data));
   };
 
   const onSubmit = async (data: RegionFormValues) => {
     try {
-      const res = await fetch("http://localhost:4000/regions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      const res = await fetch(
+        "http://api_jornal.railway.internal:4000/regions",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        }
+      );
       if (!res.ok) throw new Error("Erro ao criar região");
       toast.success("Região criada com sucesso!");
       fetchRegions();
@@ -43,7 +46,7 @@ export default function RegionForm() {
     try {
       // DELETE agora funciona com nossa API
       const res = await fetch(
-        `http://localhost:4000/regions/${regionToDelete}`,
+        `http://api_jornal.railway.internal:4000/regions/${regionToDelete}`,
         { method: "DELETE" }
       );
       if (!res.ok) throw new Error("Erro ao deletar região");

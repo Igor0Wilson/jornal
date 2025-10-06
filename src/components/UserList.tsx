@@ -26,7 +26,7 @@ export default function UserList() {
   }, []);
 
   const fetchUsers = () => {
-    fetch("http://localhost:4000/users")
+    fetch("http://api_jornal.railway.internal:4000/users")
       .then((res) => res.json())
       .then((data) => setUsers(data))
       .catch((err) => console.error("Erro ao carregar usuários:", err));
@@ -34,7 +34,7 @@ export default function UserList() {
 
   const onSubmit = async (data: UserFormValues) => {
     try {
-      const res = await fetch("http://localhost:4000/users", {
+      const res = await fetch("http://api_jornal.railway.internal:4000/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -54,9 +54,12 @@ export default function UserList() {
     if (userToDelete === null) return;
 
     try {
-      const res = await fetch(`http://localhost:4000/users/${userToDelete}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(
+        `http://api_jornal.railway.internal:4000/users/${userToDelete}`,
+        {
+          method: "DELETE",
+        }
+      );
       if (!res.ok) throw new Error("Erro ao deletar usuário");
 
       toast.success("Usuário deletado!");

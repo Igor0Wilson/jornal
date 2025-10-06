@@ -16,7 +16,13 @@ interface NewsData {
   images: string[]; // imagens já existentes (URLs)
 }
 
-export default function NewsEdit({ id, cities, regions, onCancel, onSaved }: Props) {
+export default function NewsEdit({
+  id,
+  cities,
+  regions,
+  onCancel,
+  onSaved,
+}: Props) {
   const [form, setForm] = useState({
     title: "",
     content: "",
@@ -32,7 +38,9 @@ export default function NewsEdit({ id, cities, regions, onCancel, onSaved }: Pro
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const res = await fetch(`http://localhost:4000/news/${id}`);
+        const res = await fetch(
+          `http://api_jornal.railway.internal:4000/news/${id}`
+        );
         const data: NewsData = await res.json();
         setForm({ ...data, images: [] });
         setExistingImages(data.images || []);
@@ -44,7 +52,9 @@ export default function NewsEdit({ id, cities, regions, onCancel, onSaved }: Pro
   }, [id]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
     if (e.target instanceof HTMLInputElement && e.target.files) {
@@ -80,7 +90,10 @@ export default function NewsEdit({ id, cities, regions, onCancel, onSaved }: Pro
     existingImages.forEach((img) => data.append("existingImages", img));
 
     try {
-      await fetch(`http://localhost:4000/news/${id}`, { method: "PUT", body: data });
+      await fetch(`http://api_jornal.railway.internal:4000/news/${id}`, {
+        method: "PUT",
+        body: data,
+      });
       onSaved();
     } catch (err) {
       console.error("Erro ao salvar notícia:", err);
@@ -150,7 +163,7 @@ export default function NewsEdit({ id, cities, regions, onCancel, onSaved }: Pro
               {existingImages.map((img, idx) => (
                 <div key={idx} className="relative">
                   <img
-                    src={`http://localhost:4000/${img}`}
+                    src={`http://api_jornal.railway.internal:4000/${img}`}
                     alt={`imagem ${idx}`}
                     className="w-32 h-32 object-cover rounded"
                   />

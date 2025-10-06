@@ -30,7 +30,7 @@ export default function NewsList({ noticias }: NewsListProps) {
             <div className="flex gap-4 p-4 border-b hover:bg-gray-50 cursor-pointer">
               <div className="w-40 h-28 md:w-48 md:h-32 lg:w-56 lg:h-36 flex-shrink-0">
                 <img
-                  src={`http://localhost:4000/${primeiraImagem}`}
+                  src={`http://api_jornal.railway.internal:4000/${primeiraImagem}`}
                   alt={noticia.title}
                   className="w-full h-full object-cover rounded-md"
                 />

@@ -20,7 +20,9 @@ export default function AdsAdminEdit({
   });
 
   const [preview, setPreview] = useState<string>(
-    ad.image_url ? `http://localhost:4000/${ad.image_url}` : ""
+    ad.image_url
+      ? `http://api_jornal.railway.internal:4000/${ad.image_url}`
+      : ""
   );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,10 +48,13 @@ export default function AdsAdminEdit({
     if (form.image) data.append("image", form.image);
 
     try {
-      await fetch(`http://localhost:4000/publicidade/${ad.id}`, {
-        method: "PUT",
-        body: data,
-      });
+      await fetch(
+        `http://api_jornal.railway.internal:4000/publicidade/${ad.id}`,
+        {
+          method: "PUT",
+          body: data,
+        }
+      );
       onSaved();
     } catch (err) {
       console.error("Erro ao atualizar publicidade:", err);

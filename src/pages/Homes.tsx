@@ -27,7 +27,7 @@ export default function Home() {
   const [ads, setAds] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:4000/publicidade")
+    fetch("http://api_jornal.railway.internal:4000/publicidade")
       .then((res) => res.json())
       .then((data) => setAds(Array.isArray(data) ? data : []))
       .catch((err) => console.error("Erro ao carregar publicidades:", err));
@@ -35,7 +35,7 @@ export default function Home() {
 
   // Carregar notícias
   useEffect(() => {
-    fetch("http://localhost:4000/news")
+    fetch("http://api_jornal.railway.internal:4000/news")
       .then((res) => res.json())
       .then((data) => setNoticias(Array.isArray(data) ? data : []))
       .catch((err) => console.error("Erro ao carregar notícias:", err));
@@ -43,7 +43,7 @@ export default function Home() {
 
   // Carregar regiões
   useEffect(() => {
-    fetch("http://localhost:4000/regions")
+    fetch("http://api_jornal.railway.internal:4000/regions")
       .then((res) => res.json())
       .then((data) => setRegions(Array.isArray(data) ? data : []))
       .catch((err) => console.error("Erro ao carregar regiões:", err));
@@ -52,7 +52,9 @@ export default function Home() {
   // Carregar cidades conforme a região
   useEffect(() => {
     if (selectedRegion) {
-      fetch(`http://localhost:4000/cities?region_id=${selectedRegion}`)
+      fetch(
+        `http://api_jornal.railway.internal:4000/cities?region_id=${selectedRegion}`
+      )
         .then((res) => res.json())
         .then((data) => setCities(Array.isArray(data) ? data : []))
         .catch((err) => console.error("Erro ao carregar cidades:", err));
@@ -176,7 +178,7 @@ export default function Home() {
             <>
               <div className="lg:col-span-2 relative rounded-xl overflow-hidden shadow-md">
                 <img
-                  src={`http://localhost:4000/${
+                  src={`http://api_jornal.railway.internal:4000/${
                     principais[0].images?.[0] || ""
                   }`}
                   alt={principais[0].title}
@@ -199,7 +201,9 @@ export default function Home() {
                     className="relative rounded-xl overflow-hidden shadow-md h-44"
                   >
                     <img
-                      src={`http://localhost:4000/${n.images?.[0] || ""}`}
+                      src={`http://api_jornal.railway.internal:4000/${
+                        n.images?.[0] || ""
+                      }`}
                       alt={n.title}
                       className="w-full h-full object-cover"
                     />
@@ -249,7 +253,7 @@ export default function Home() {
               className="block rounded-md overflow-hidden shadow-md"
             >
               <img
-                src={`http://localhost:4000/${ad.image_url}`}
+                src={`http://api_jornal.railway.internal:4000/${ad.image_url}`}
                 alt={ad.title}
                 className="w-full h-48 object-cover"
               />

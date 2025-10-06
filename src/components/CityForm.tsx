@@ -30,24 +30,27 @@ export default function CityForm() {
   }, []);
 
   const fetchCities = () => {
-    fetch("http://localhost:4000/cities")
+    fetch("http://api_jornal.railway.internal:4000/cities")
       .then((res) => res.json())
       .then((data) => setCities(data));
   };
 
   const fetchRegions = () => {
-    fetch("http://localhost:4000/regions")
+    fetch("http://api_jornal.railway.internal:4000/regions")
       .then((res) => res.json())
       .then((data) => setRegions(data));
   };
 
   const onSubmit = async (data: CityFormValues) => {
     try {
-      const res = await fetch("http://localhost:4000/cities", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      const res = await fetch(
+        "http://api_jornal.railway.internal:4000/cities",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        }
+      );
       if (!res.ok) throw new Error("Erro ao criar cidade");
       toast.success("Cidade criada com sucesso!");
       fetchCities();
@@ -60,9 +63,12 @@ export default function CityForm() {
   const confirmDelete = async () => {
     if (cityToDelete === null) return;
     try {
-      const res = await fetch(`http://localhost:4000/cities/${cityToDelete}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(
+        `http://api_jornal.railway.internal:4000/cities/${cityToDelete}`,
+        {
+          method: "DELETE",
+        }
+      );
       if (!res.ok) throw new Error("Erro ao deletar cidade");
       toast.success("Cidade deletada!");
       fetchCities();
