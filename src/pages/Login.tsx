@@ -7,6 +7,7 @@ interface LoginFormValues {
   email: string;
   password: string;
 }
+const API_URL = "https://api-jornal-production.up.railway.app";
 
 export default function Login() {
   const { register, handleSubmit } = useForm<LoginFormValues>();
@@ -14,14 +15,11 @@ export default function Login() {
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      const res = await fetch(
-        "http://api_jornal.railway.internal:4000/users/login",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        }
-      );
+      const res = await fetch(`${API_URL}/users/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Email ou senha incorretos");
