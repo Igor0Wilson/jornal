@@ -20,9 +20,7 @@ export default function AdsAdminEdit({
   });
 
   const [preview, setPreview] = useState<string>(
-    ad.image_url
-      ? `https://apijornal-production.up.railway.app/${ad.image_url}`
-      : ""
+    ad.image || "" // usa a propriedade correta
   );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

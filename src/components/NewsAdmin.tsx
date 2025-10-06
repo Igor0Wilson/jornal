@@ -239,14 +239,10 @@ export default function NewsAdmin() {
               <div className="flex items-center gap-3">
                 {firstImage ? (
                   <img
-                    src={`https://apijornal-production.up.railway.app/${firstImage}`}
+                    src={firstImage}
                     alt={n.title}
-                    className="w-20 h-20 object-cover rounded"
-                    onClick={() =>
-                      setModalImage(
-                        `https://apijornal-production.up.railway.app/${firstImage}`
-                      )
-                    }
+                    className="w-20 h-20 object-cover rounded cursor-pointer"
+                    onClick={() => setModalImage(firstImage)}
                   />
                 ) : (
                   <div className="w-20 h-20 bg-gray-200 rounded flex items-center justify-center text-gray-400 text-sm">

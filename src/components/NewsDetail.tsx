@@ -28,15 +28,25 @@ export default function NewsDetail() {
 
   if (!noticia) return <p>Carregando...</p>;
 
-  // Preparar imagens
+  // Monta lista de imagens
   const imagens = noticia.images?.length
-    ? noticia.images.map((img) => img.replace(/\\/g, "/"))
+    ? noticia.images
     : noticia.image_url
-    ? [noticia.image_url.replace(/\\/g, "/")]
+    ? [noticia.image_url]
     : ["https://via.placeholder.com/600x400?text=Sem+imagem"];
 
+  // Separa principal e miniaturas
   const imagemPrincipal = imagens[0];
   const imagensMenores = imagens.slice(1);
+
+  // Função para tratar URL
+  const resolveImageUrl = (url: string) =>
+    url.startsWith("http")
+      ? url
+      : `https://apijornal-production.up.railway.app/${url.replace(
+          /\\/g,
+          "/"
+        )}`;
 
   return (
     <main className="max-w-5xl mx-auto p-6">
@@ -47,33 +57,31 @@ export default function NewsDetail() {
         leitura: 3 min
       </p>
 
-      {/* Imagem principal completa */}
+      {/* Imagem principal */}
       <div className="mb-6">
         <img
-          src={`https://apijornal-production.up.railway.app/${imagemPrincipal}`}
+          src={resolveImageUrl(imagemPrincipal)}
           alt={noticia.title}
           className="w-full rounded-lg object-contain"
         />
       </div>
 
-      {/* Conteúdo da notícia */}
+      {/* Conteúdo */}
       <div className="text-lg leading-relaxed text-gray-800 whitespace-pre-line mb-6">
         {noticia.content}
       </div>
 
-      {/* Miniaturas das demais imagens */}
-
+      {/* Miniaturas */}
       {imagensMenores.length > 0 && (
         <div className="flex gap-3 overflow-x-auto mb-6">
           {imagensMenores.map((img, i) => (
             <img
               key={i}
-              src={`https://apijornal-production.up.railway.app/${img}`}
+              src={resolveImageUrl(img)}
               alt={`Imagem ${i + 1}`}
               className="w-36 h-24 rounded-md object-cover flex-shrink-0 cursor-pointer hover:scale-105 transition-transform"
             />
           ))}
-          <div className="max-w-3xl mx-auto my-12 p-6 bg-white-100 rounded-lg flex flex-col md:flex-row items-center justify-between gap-4"></div>
         </div>
       )}
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 interface Props {
   id: number;
@@ -13,7 +14,7 @@ interface NewsData {
   content: string;
   category: string;
   city_id: string;
-  images: string[]; // imagens já existentes (URLs)
+  images?: string[];
 }
 
 export default function NewsEdit({
@@ -28,40 +29,53 @@ export default function NewsEdit({
     content: "",
     category: "",
     city_id: "",
-    images: [] as File[], // novas imagens
+    images: [] as File[],
   });
-
-  const [existingImages, setExistingImages] = useState<string[]>([]); // imagens atuais
+  const [existingImages, setExistingImages] = useState<string[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  // carregar notícia
+  // Carregar notícia
   useEffect(() => {
     const fetchNews = async () => {
       try {
         const res = await fetch(
           `https://apijornal-production.up.railway.app/news/${id}`
         );
-        const data: NewsData = await res.json();
-        setForm({ ...data, images: [] });
-        setExistingImages(data.images || []);
+        const data = await res.json();
+        const noticia = Array.isArray(data) ? data[0] : data;
+
+        setForm({
+          title: noticia.title || "",
+          content: noticia.content || "",
+          category: noticia.category || "",
+          city_id: noticia.city_id?.toString() || "",
+          images: [],
+        });
+
+        setExistingImages(noticia.images || []);
       } catch (err) {
+        toast.error("Erro ao carregar notícia");
         console.error("Erro ao carregar notícia:", err);
       }
     };
+
     fetchNews();
   }, [id]);
 
+  // Alterações do formulário
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
-    const { name, value } = e.target;
-    if (e.target instanceof HTMLInputElement && e.target.files) {
-      let fileArray: File[] = Array.from(e.target.files);
+    const { name, value, files } = e.target as HTMLInputElement;
+
+    if (files) {
+      let fileArray = Array.from(files);
       if (fileArray.length > 10) {
+        toast.error("Você só pode adicionar até 10 imagens.");
         fileArray = fileArray.slice(0, 10);
-        alert("Você só pode adicionar até 10 imagens.");
       }
       setForm({ ...form, images: fileArray });
       setPreviews(fileArray.map((file) => URL.createObjectURL(file)));
@@ -70,78 +84,104 @@ export default function NewsEdit({
     }
   };
 
+  // Remover imagem existente
   const removeExistingImage = (index: number) => {
-    const newImages = [...existingImages];
-    newImages.splice(index, 1);
-    setExistingImages(newImages);
+    const updated = [...existingImages];
+    updated.splice(index, 1);
+    setExistingImages(updated);
   };
 
+  // Salvar alterações
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+
     const data = new FormData();
     data.append("title", form.title);
     data.append("content", form.content);
     data.append("category", form.category);
     data.append("city_id", form.city_id);
 
-    // enviar novas imagens
     form.images.forEach((img) => data.append("images", img));
-    // enviar imagens antigas restantes
     existingImages.forEach((img) => data.append("existingImages", img));
 
     try {
-      await fetch(`https://apijornal-production.up.railway.app/news/${id}`, {
-        method: "PUT",
-        body: data,
-      });
+      const res = await fetch(
+        `https://apijornal-production.up.railway.app/news/${id}`,
+        {
+          method: "PUT",
+          body: data,
+        }
+      );
+
+      if (!res.ok) throw new Error("Erro ao salvar notícia");
+
+      toast.success("Notícia atualizada com sucesso!");
       onSaved();
     } catch (err) {
-      console.error("Erro ao salvar notícia:", err);
+      console.error(err);
+      toast.error("Erro ao salvar alterações");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="p-6 bg-white rounded shadow-md">
-      <h2 className="text-2xl font-bold mb-6">Editar notícia</h2>
+    <div className="p-6 bg-white rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold mb-6">Editar Notícia</h2>
+
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        {/* Título */}
         <input
           type="text"
           name="title"
           value={form.title}
           onChange={handleChange}
-          placeholder="Título"
-          className="border p-2 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+          placeholder="Título da notícia"
+          className="border p-2 rounded focus:ring-2 focus:ring-blue-400 outline-none"
           required
         />
+
+        {/* Conteúdo */}
         <textarea
           name="content"
           value={form.content}
           onChange={handleChange}
-          placeholder="Conteúdo"
-          className="border p-2 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-          rows={5}
+          placeholder="Conteúdo da notícia"
+          className="border p-2 rounded focus:ring-2 focus:ring-blue-400 outline-none"
+          rows={6}
           required
         />
+
+        {/* Categoria */}
         <select
           name="category"
           value={form.category}
           onChange={handleChange}
-          className="border p-2 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="border p-2 rounded focus:ring-2 focus:ring-blue-400 outline-none"
           required
         >
           <option value="">Selecione a categoria</option>
-          <option value="Tecnologia">Tecnologia</option>
-          <option value="Saúde">Saúde</option>
-          <option value="Crimes">Crimes</option>
-          <option value="Política">Política</option>
-          <option value="Esportes">Esportes</option>
-          <option value="Entretenimento">Entretenimento</option>
+          {[
+            "Tecnologia",
+            "Saúde",
+            "Crimes",
+            "Política",
+            "Esportes",
+            "Entretenimento",
+          ].map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
         </select>
+
+        {/* Cidade */}
         <select
           name="city_id"
           value={form.city_id}
           onChange={handleChange}
-          className="border p-2 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="border p-2 rounded focus:ring-2 focus:ring-blue-400 outline-none"
           required
         >
           <option value="">Selecione a cidade</option>
@@ -159,18 +199,19 @@ export default function NewsEdit({
         {existingImages.length > 0 && (
           <div>
             <h3 className="font-semibold mb-2">Imagens atuais</h3>
-            <div className="flex gap-2 flex-wrap">
-              {existingImages.map((img, idx) => (
-                <div key={idx} className="relative">
+            <div className="flex flex-wrap gap-3">
+              {existingImages.map((img, i) => (
+                <div key={i} className="relative">
                   <img
-                    src={`https://apijornal-production.up.railway.app/${img}`}
-                    alt={`imagem ${idx}`}
+                    src={img}
+                    alt={`imagem-${i}`}
                     className="w-32 h-32 object-cover rounded"
                   />
+
                   <button
                     type="button"
-                    onClick={() => removeExistingImage(idx)}
-                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                    onClick={() => removeExistingImage(i)}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
                   >
                     ×
                   </button>
@@ -184,20 +225,20 @@ export default function NewsEdit({
         {previews.length > 0 && (
           <div>
             <h3 className="font-semibold mb-2">Novas imagens</h3>
-            <div className="flex gap-2 flex-wrap">
-              {previews.map((src, idx) => (
-                <div key={idx} className="relative">
-                  <img
-                    src={src}
-                    alt={`preview ${idx}`}
-                    className="w-32 h-32 object-cover rounded"
-                  />
-                </div>
+            <div className="flex flex-wrap gap-3">
+              {previews.map((src, i) => (
+                <img
+                  key={i}
+                  src={src}
+                  alt={`preview-${i}`}
+                  className="w-32 h-32 object-cover rounded"
+                />
               ))}
             </div>
           </div>
         )}
 
+        {/* Upload */}
         <input
           type="file"
           name="images"
@@ -207,13 +248,18 @@ export default function NewsEdit({
           className="mt-2"
         />
 
-        <div className="flex gap-2 mt-4">
+        {/* Botões */}
+        <div className="flex gap-3 mt-4">
           <button
             type="submit"
-            className="bg-green-500 text-white px-5 py-2 rounded hover:bg-green-600"
+            disabled={loading}
+            className={`px-5 py-2 rounded text-white ${
+              loading ? "bg-gray-400" : "bg-green-500 hover:bg-green-600"
+            } transition`}
           >
-            Salvar alterações
+            {loading ? "Salvando..." : "Salvar alterações"}
           </button>
+
           <button
             type="button"
             onClick={onCancel}

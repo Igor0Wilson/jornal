@@ -26,6 +26,7 @@ export default function Home() {
   const [dataFim, setDataFim] = useState("");
   const [ads, setAds] = useState<any[]>([]);
 
+  // Carregar publicidades
   useEffect(() => {
     fetch("https://apijornal-production.up.railway.app/publicidade")
       .then((res) => res.json())
@@ -49,7 +50,7 @@ export default function Home() {
       .catch((err) => console.error("Erro ao carregar regiões:", err));
   }, []);
 
-  // Carregar cidades conforme a região
+  // Carregar cidades conforme a região selecionada
   useEffect(() => {
     if (selectedRegion) {
       fetch(
@@ -66,38 +67,34 @@ export default function Home() {
   }, [selectedRegion]);
 
   // Filtro de notícias
-  const noticiasFiltradas = Array.isArray(noticias)
-    ? noticias.filter((n) => {
-        const filtroTexto =
-          n.title.toLowerCase().includes(busca.toLowerCase()) ||
-          n.category.toLowerCase().includes(busca.toLowerCase());
+  const noticiasFiltradas = noticias.filter((n) => {
+    const filtroTexto =
+      n.title.toLowerCase().includes(busca.toLowerCase()) ||
+      n.category.toLowerCase().includes(busca.toLowerCase());
 
-        let filtroLocal = true;
-        if (selectedCity) {
-          const cityName = cities.find((c) => c.id === selectedCity)?.name;
-          filtroLocal = cityName
-            ? n.city?.toLowerCase() === cityName.toLowerCase()
-            : true;
-        } else if (selectedRegion) {
-          const regionName = regions.find((r) => r.id === selectedRegion)?.name;
-          filtroLocal = regionName
-            ? n.region?.toLowerCase() === regionName.toLowerCase()
-            : true;
-        }
+    let filtroLocal = true;
+    if (selectedCity) {
+      const cityName = cities.find((c) => c.id === selectedCity)?.name;
+      filtroLocal = cityName
+        ? n.city?.toLowerCase() === cityName.toLowerCase()
+        : true;
+    } else if (selectedRegion) {
+      const regionName = regions.find((r) => r.id === selectedRegion)?.name;
+      filtroLocal = regionName
+        ? n.region?.toLowerCase() === regionName.toLowerCase()
+        : true;
+    }
 
-        let filtroData = true;
-        if (n.date) {
-          const noticiaData = new Date(n.date);
-          if (dataInicio) filtroData = noticiaData >= new Date(dataInicio);
-          if (dataFim)
-            filtroData = filtroData && noticiaData <= new Date(dataFim);
-        }
+    let filtroData = true;
+    if (n.created_at) {
+      const noticiaData = new Date(n.created_at);
+      if (dataInicio) filtroData = noticiaData >= new Date(dataInicio);
+      if (dataFim) filtroData = filtroData && noticiaData <= new Date(dataFim);
+    }
 
-        return filtroTexto && filtroLocal && filtroData;
-      })
-    : [];
+    return filtroTexto && filtroLocal && filtroData;
+  });
 
-  // Ordenar por data
   const noticiasOrdenadas = [...noticiasFiltradas].sort(
     (a, b) =>
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
@@ -149,7 +146,6 @@ export default function Home() {
               onChange={(e) => setDataInicio(e.target.value)}
               className="p-2 rounded-md border border-gray-300"
             />
-
             <input
               type="date"
               value={dataFim}
@@ -178,9 +174,10 @@ export default function Home() {
             <>
               <div className="lg:col-span-2 relative rounded-xl overflow-hidden shadow-md">
                 <img
-                  src={`https://apijornal-production.up.railway.app/${
-                    principais[0].images?.[0] || ""
-                  }`}
+                  src={
+                    principais[0].images?.[0] ||
+                    "https://via.placeholder.com/600x400?text=Sem+imagem"
+                  }
                   alt={principais[0].title}
                   className="w-full h-96 object-cover"
                 />
@@ -201,9 +198,10 @@ export default function Home() {
                     className="relative rounded-xl overflow-hidden shadow-md h-44"
                   >
                     <img
-                      src={`https://apijornal-production.up.railway.app/${
-                        n.images?.[0] || ""
-                      }`}
+                      src={
+                        n.images?.[0] ||
+                        "https://via.placeholder.com/400x200?text=Sem+imagem"
+                      }
                       alt={n.title}
                       className="w-full h-full object-cover"
                     />
@@ -224,49 +222,56 @@ export default function Home() {
 
         {/* === CONTEÚDO PRINCIPAL + SIDEBAR === */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Coluna principal: NewsList */}
           <div className="lg:col-span-2">
             <NewsList noticias={restantes} />
           </div>
 
-          {/* Coluna Sidebar */}
           <div className="lg:col-span-1">
             <Sidebar noticias={noticiasOrdenadas} />
           </div>
         </section>
+
+        {/* === PUBLICIDADES === */}
+        {ads.length > 0 && (
+          <section className="max-w-6xl mx-auto mt-10 px-6">
+            <div className="flex items-center space-x-4 border-b border-gray-300 pb-2 mb-4">
+              <span className="text-gray-700 font-semibold cursor-pointer">
+                Publicidade
+              </span>
+            </div>
+
+            {/* Grid responsivo com cards maiores */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {ads.map((ad) => (
+                <a
+                  key={ad.id}
+                  href={ad.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block rounded-lg overflow-hidden shadow-lg bg-white hover:scale-105 transition-transform duration-200"
+                >
+                  <div className="w-full aspect-[4/3] md:aspect-[16/9] overflow-hidden">
+                    <img
+                      src={
+                        ad.image
+                          ? ad.image
+                          : "https://via.placeholder.com/400x300?text=Sem+imagem"
+                      }
+                      alt={ad.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="p-3">
+                    <p className="text-base font-semibold text-gray-800">
+                      {ad.title}
+                    </p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
       </main>
-
-      {/* === PUBLICIDADES NO FIM DA PÁGINA (estilo galeria) === */}
-      <section className="max-w-6xl mx-auto mt-10 px-6">
-        <div className="flex items-center space-x-4 border-b border-gray-300 pb-2 mb-4">
-          <span className="text-gray-700 font-semibold cursor-pointer">
-            Publicidade
-          </span>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {ads.map((ad) => (
-            <a
-              key={ad.id}
-              href={ad.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block rounded-md overflow-hidden shadow-md"
-            >
-              <img
-                src={`https://apijornal-production.up.railway.app/${ad.image_url}`}
-                alt={ad.title}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-2 bg-white">
-                <p className="text-sm font-semibold text-gray-800">
-                  {ad.title}
-                </p>
-              </div>
-            </a>
-          ))}
-        </div>
-      </section>
-
       <Footer />
     </div>
   );

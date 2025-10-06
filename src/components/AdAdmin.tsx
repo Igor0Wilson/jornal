@@ -177,22 +177,19 @@ export default function AdsAdmin() {
             className="flex justify-between items-center bg-gray-50 p-3 rounded shadow-sm"
           >
             <div className="flex items-center gap-3">
-              {ad.image_url ? (
+              {ad.image ? (
                 <img
-                  src={`https://apijornal-production.up.railway.app/${ad.image_url}`}
+                  src={ad.image} // usar diretamente
                   alt={ad.title}
                   className="w-20 h-20 object-cover rounded"
-                  onClick={() =>
-                    setModalImage(
-                      `https://apijornal-production.up.railway.app/${ad.image_url}`
-                    )
-                  }
+                  onClick={() => setModalImage(ad.image)}
                 />
               ) : (
                 <div className="w-20 h-20 bg-gray-200 rounded flex items-center justify-center text-gray-400 text-sm">
                   Sem imagem
                 </div>
               )}
+
               <div>
                 <h3 className="font-semibold">{ad.title}</h3>
                 <p className="text-sm text-gray-600">

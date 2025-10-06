@@ -5,7 +5,8 @@ interface Noticia {
   title: string;
   category: string;
   created_at: string;
-  image_url: string; // pode ser várias URLs separadas por vírgula
+  image_url?: string;
+  images?: string[];
 }
 
 interface NewsCardProps {
@@ -41,16 +42,24 @@ interface NewsListProps {
 export default function NewsList({ noticias }: NewsListProps) {
   return (
     <div className="flex flex-col gap-4">
-      {noticias.map((noticia) => (
-        <Link key={noticia.id} to={`/news/${noticia.id}`}>
-          <NewsCard
-            titulo={noticia.title}
-            categoria={noticia.category}
-            data={new Date(noticia.created_at).toLocaleDateString("pt-BR")}
-            imagem={noticia.image_url.split(",")[0]} // pega só a primeira imagem
-          />
-        </Link>
-      ))}
+      {noticias.map((noticia) => {
+        const imagem =
+          Array.isArray(noticia.images) && noticia.images.length > 0
+            ? noticia.images[0]
+            : noticia.image_url ||
+              "https://via.placeholder.com/150x100?text=Sem+imagem";
+
+        return (
+          <Link key={noticia.id} to={`/news/${noticia.id}`}>
+            <NewsCard
+              titulo={noticia.title}
+              categoria={noticia.category}
+              data={new Date(noticia.created_at).toLocaleDateString("pt-BR")}
+              imagem={imagem}
+            />
+          </Link>
+        );
+      })}
     </div>
   );
 }
