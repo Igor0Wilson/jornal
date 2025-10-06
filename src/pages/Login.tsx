@@ -7,7 +7,7 @@ interface LoginFormValues {
   email: string;
   password: string;
 }
-const API_URL = "https://api-jornal-production.up.railway.app";
+const API_URL = "/api/login"; // chama a API do próprio frontend
 
 export default function Login() {
   const { register, handleSubmit } = useForm<LoginFormValues>();
@@ -15,7 +15,7 @@ export default function Login() {
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      const res = await fetch(`${API_URL}/users/login`, {
+      const res = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
