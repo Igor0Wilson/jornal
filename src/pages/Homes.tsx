@@ -172,7 +172,10 @@ export default function Home() {
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           {principais.length > 0 && (
             <>
-              <div className="lg:col-span-2 relative rounded-xl overflow-hidden shadow-md">
+              <a
+                href={`/news/${principais[0].id}`}
+                className="lg:col-span-2 relative rounded-xl overflow-hidden shadow-md"
+              >
                 <img
                   src={
                     principais[0].images?.[0] ||
@@ -189,12 +192,13 @@ export default function Home() {
                     {principais[0].category}
                   </p>
                 </div>
-              </div>
+              </a>
 
               <div className="flex flex-col gap-6">
                 {principais.slice(1, 3).map((n) => (
-                  <div
+                  <a
                     key={n.id}
+                    href={`/news/${n.id}`}
                     className="relative rounded-xl overflow-hidden shadow-md h-44"
                   >
                     <img
@@ -213,7 +217,7 @@ export default function Home() {
                         {n.category}
                       </p>
                     </div>
-                  </div>
+                  </a>
                 ))}
               </div>
             </>
