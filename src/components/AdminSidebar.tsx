@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Newspaper, MapPin, Layers, User, LogOut, Globe } from "lucide-react";
+import {
+  Newspaper,
+  MapPin,
+  Layers,
+  User,
+  LogOut,
+  Globe,
+  Layers2,
+  UserMinus,
+} from "lucide-react";
 
 interface AdminSidebarProps {
   setView: (view: string) => void;
@@ -26,11 +35,11 @@ export default function AdminSidebarLucide({
     { name: "Regiões", icon: Globe, view: "regions" },
     { name: "Usuários", icon: User, view: "users" },
     { name: "Publicidade", icon: Layers, view: "ads" },
+    { name: "Parceiros", icon: UserMinus, view: "partners" },
   ];
 
   return (
     <aside className="bg-black text-white w-64 min-h-screen flex flex-col shadow-lg">
-      {/* Logo no topo */}
       <div className="p-6 flex flex-col items-center border-b border-gray-800">
         <h1 className="text-2xl font-bold mb-1">Sistema restrito</h1>
         <p className="text-sm text-gray-400">Painel do administrador</p>

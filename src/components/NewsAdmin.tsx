@@ -22,6 +22,7 @@ export default function NewsAdmin() {
     content: "",
     category: "",
     city_id: "",
+    reading_time: "",
     images: [] as File[],
   });
 
@@ -92,14 +93,23 @@ export default function NewsAdmin() {
     data.append("content", form.content);
     data.append("category", form.category);
     data.append("city_id", form.city_id);
+    data.append("reading_time", form.reading_time); // ✅ novo campo
     form.images.forEach((img) => data.append("images", img));
 
     await fetch("https://apijornal-production.up.railway.app/news", {
       method: "POST",
       body: data,
     });
+
     fetchNews();
-    setForm({ title: "", content: "", category: "", city_id: "", images: [] });
+    setForm({
+      title: "",
+      content: "",
+      category: "",
+      city_id: "",
+      reading_time: "",
+      images: [],
+    });
     setPreviews([]);
   };
 
@@ -174,7 +184,18 @@ export default function NewsAdmin() {
           <option value="Política">Política</option>
           <option value="Esportes">Esportes</option>
           <option value="Entretenimento">Entretenimento</option>
+          <option value="Acidentes">Acidentes</option>
         </select>
+        <input
+          type="number"
+          name="reading_time"
+          placeholder="Tempo de leitura (minutos)"
+          value={form.reading_time}
+          onChange={handleChange}
+          className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+          required
+        />
+
         <select
           name="city_id"
           value={form.city_id}

@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import AdsAdmin from "../components/AdAdmin";
+import PartnersAdmin from "../components/PartnersAdmin";
 
 export default function Admin() {
   const [view, setView] = useState("news");
@@ -37,6 +38,7 @@ export default function Admin() {
           {view === "regions" && <RegionForm />}
           {view === "users" && <UserList />}
           {view === "ads" && <AdsAdmin />}
+          {view === "partners" && <PartnersAdmin />}
         </main>
       </div>
     </div>

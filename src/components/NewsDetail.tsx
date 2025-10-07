@@ -11,6 +11,7 @@ interface Noticia {
   author?: string;
   images?: string[];
   image_url?: string | null;
+  reading_time?: number;
 }
 
 interface Publicidade {
@@ -23,10 +24,11 @@ interface Publicidade {
 export default function NewsDetail() {
   const { id } = useParams<{ id: string }>();
   const [noticia, setNoticia] = useState<Noticia | null>(null);
+  const [noticias, setNoticias] = useState<Noticia[]>([]); // todas as notícias
   const [ads, setAds] = useState<Publicidade[]>([]);
-  const [modalImg, setModalImg] = useState<string | null>(null); // modal de imagem
+  const [modalImg, setModalImg] = useState<string | null>(null);
 
-  // Buscar notícia
+  // Buscar notícia atual
   useEffect(() => {
     fetch(`https://apijornal-production.up.railway.app/news/${id}`)
       .then((res) => res.json())
@@ -35,6 +37,14 @@ export default function NewsDetail() {
       })
       .catch((err) => console.error(err));
   }, [id]);
+
+  // Buscar todas as notícias (para "Veja também")
+  useEffect(() => {
+    fetch("https://apijornal-production.up.railway.app/news")
+      .then((res) => res.json())
+      .then((data) => setNoticias(Array.isArray(data) ? data : []))
+      .catch((err) => console.error(err));
+  }, []);
 
   // Buscar publicidades
   useEffect(() => {
@@ -69,7 +79,7 @@ export default function NewsDetail() {
       <p className="text-sm text-gray-500 mb-6">
         {noticia.author || "Redação"} |{" "}
         {new Date(noticia.created_at).toLocaleDateString("pt-BR")} | Tempo de
-        leitura: 3 min
+        leitura: {noticia.reading_time ?? 3} min
       </p>
 
       {/* Imagem principal */}
@@ -102,8 +112,57 @@ export default function NewsDetail() {
         </div>
       )}
 
-      {/* Publicidades */}
+      {/* Veja também */}
+      {noticias.length > 0 && (
+        <section className="max-w-6xl mx-auto mt-10 px-6">
+          <h2 className="text-xl font-bold text-yellow-600 mb-4 border-b pb-2">
+            Veja também
+          </h2>
 
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {noticias
+              .filter((n) => n.id !== noticia.id) // não mostrar a notícia atual
+              .slice(0, 3) // pega as 3 mais recentes
+              .map((rel) => {
+                const primeiraImagem =
+                  rel.images && rel.images.length > 0
+                    ? rel.images[0].startsWith("http")
+                      ? rel.images[0]
+                      : `https://apijornal-production.up.railway.app/${rel.images[0].replace(
+                          /\\/g,
+                          "/"
+                        )}`
+                    : "https://via.placeholder.com/400x250?text=Sem+imagem";
+
+                return (
+                  <a
+                    key={rel.id}
+                    href={`/news/${rel.id}`}
+                    className="block rounded-lg overflow-hidden shadow-lg bg-white hover:scale-105 transition-transform duration-200"
+                  >
+                    <div className="w-full aspect-[4/3] overflow-hidden">
+                      <img
+                        src={primeiraImagem}
+                        alt={rel.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="p-3">
+                      <h3 className="text-base font-semibold text-gray-800 line-clamp-3">
+                        {rel.title}
+                      </h3>
+                      <p className="text-xs text-gray-500 mt-2">
+                        {new Date(rel.created_at).toLocaleDateString("pt-BR")}
+                      </p>
+                    </div>
+                  </a>
+                );
+              })}
+          </div>
+        </section>
+      )}
+
+      {/* Publicidades */}
       {ads.length > 0 && (
         <section className="max-w-6xl mx-auto mt-10 px-6">
           <div className="flex items-center space-x-4 border-b border-gray-300 pb-2 mb-4">
@@ -112,7 +171,6 @@ export default function NewsDetail() {
             </span>
           </div>
 
-          {/* Grid responsivo com cards maiores */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {ads.map((ad) => (
               <a
@@ -154,7 +212,7 @@ export default function NewsDetail() {
             src={modalImg}
             alt="Imagem ampliada"
             className="max-w-[90%] max-h-[90%] rounded-lg object-contain"
-            onClick={(e) => e.stopPropagation()} // impede fechar clicando na imagem
+            onClick={(e) => e.stopPropagation()}
           />
         </div>
       )}

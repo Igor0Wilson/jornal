@@ -25,6 +25,14 @@ export default function Home() {
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
   const [ads, setAds] = useState<any[]>([]);
+  const [partners, setPartners] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch("https://apijornal-production.up.railway.app/partners")
+      .then((res) => res.json())
+      .then((data) => setPartners(Array.isArray(data) ? data : []))
+      .catch((err) => console.error("Erro ao carregar parceiros:", err));
+  }, []);
 
   // Carregar publicidades
   useEffect(() => {
@@ -268,6 +276,46 @@ export default function Home() {
                   <div className="p-3">
                     <p className="text-base font-semibold text-gray-800">
                       {ad.title}
+                    </p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+        {/* === PARCEIROS === */}
+        {partners.length > 0 && (
+          <section className="max-w-6xl mx-auto mt-10 px-6">
+            <div className="flex items-center space-x-4 border-b border-gray-300 pb-2 mb-4">
+              <span className="text-gray-700 font-semibold cursor-pointer">
+                Parceiros
+              </span>
+            </div>
+
+            {/* Grid responsivo com cards maiores */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {partners.map((partner) => (
+                <a
+                  key={partner.id}
+                  href={partner.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block rounded-lg overflow-hidden shadow-lg bg-white hover:scale-105 transition-transform duration-200"
+                >
+                  <div className="w-full aspect-[4/3] md:aspect-[16/9] overflow-hidden">
+                    <img
+                      src={
+                        partner.image_url
+                          ? partner.image_url
+                          : "https://via.placeholder.com/400x300?text=Sem+imagem"
+                      }
+                      alt={partner.company_name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="p-3">
+                    <p className="text-base font-semibold text-gray-800">
+                      {partner.company_name}
                     </p>
                   </div>
                 </a>
