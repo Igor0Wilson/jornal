@@ -3,6 +3,10 @@ import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import NewsList, { Noticia } from "../components/NewsList";
 import Footer from "../components/Footer";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Autoplay } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
 
 interface Region {
   id: number;
@@ -34,7 +38,6 @@ export default function Home() {
       .catch((err) => console.error("Erro ao carregar parceiros:", err));
   }, []);
 
-  // Carregar publicidades
   useEffect(() => {
     fetch("https://apijornal-production.up.railway.app/publicidade")
       .then((res) => res.json())
@@ -42,7 +45,6 @@ export default function Home() {
       .catch((err) => console.error("Erro ao carregar publicidades:", err));
   }, []);
 
-  // Carregar notícias
   useEffect(() => {
     fetch("https://apijornal-production.up.railway.app/news")
       .then((res) => res.json())
@@ -50,7 +52,6 @@ export default function Home() {
       .catch((err) => console.error("Erro ao carregar notícias:", err));
   }, []);
 
-  // Carregar regiões
   useEffect(() => {
     fetch("https://apijornal-production.up.railway.app/regions")
       .then((res) => res.json())
@@ -58,7 +59,6 @@ export default function Home() {
       .catch((err) => console.error("Erro ao carregar regiões:", err));
   }, []);
 
-  // Carregar cidades conforme a região selecionada
   useEffect(() => {
     if (selectedRegion) {
       fetch(
@@ -74,7 +74,6 @@ export default function Home() {
     }
   }, [selectedRegion]);
 
-  // Filtro de notícias
   const noticiasFiltradas = noticias.filter((n) => {
     const filtroTexto =
       n.title.toLowerCase().includes(busca.toLowerCase()) ||
@@ -114,9 +113,57 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <main className="flex-grow max-w-6xl mx-auto p-6">
+        {/* === PUBLICIDADE (CARROSSEL) === */}
+        {ads.length > 0 && (
+          <section className="mb-10">
+            <div className="flex items-center space-x-4 border-b border-gray-300 pb-2 mb-4">
+              <span className="text-gray-700 font-semibold cursor-pointer">
+                Publicidade
+              </span>
+            </div>
+
+            <Swiper
+              modules={[Navigation, Autoplay]}
+              navigation
+              autoplay={{ delay: 4000 }}
+              loop
+              spaceBetween={20}
+              slidesPerView={1}
+              breakpoints={{
+                640: { slidesPerView: 1 },
+                768: { slidesPerView: 2 },
+                1024: { slidesPerView: 3 },
+              }}
+              className="rounded-xl shadow-md overflow-hidden"
+            >
+              {ads.map((ad) => (
+                <SwiperSlide key={ad.id}>
+                  <a
+                    href={ad.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block bg-white rounded-lg overflow-hidden shadow-md"
+                  >
+                    <div className="w-full aspect-[16/9]">
+                      <img
+                        src={
+                          ad.image ||
+                          "https://via.placeholder.com/1200x400?text=Publicidade"
+                        }
+                        alt={ad.title}
+                        className="w-full h-full object-cover bg-white"
+                      />
+                    </div>
+                  </a>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </section>
+        )}
+
         {/* === FILTROS === */}
         <div className="bg-gray-100 p-4 rounded-xl mb-8 shadow-sm">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
             <select
               value={selectedRegion}
               onChange={(e) =>
@@ -177,21 +224,23 @@ export default function Home() {
         </div>
 
         {/* === DESTAQUES === */}
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {principais.length > 0 && (
             <>
               <a
                 href={`/news/${principais[0].id}`}
                 className="lg:col-span-2 relative rounded-xl overflow-hidden shadow-md"
               >
-                <img
-                  src={
-                    principais[0].images?.[0] ||
-                    "https://via.placeholder.com/600x400?text=Sem+imagem"
-                  }
-                  alt={principais[0].title}
-                  className="w-full h-96 object-cover"
-                />
+                <div className="w-full aspect-[16/9] lg:aspect-[4/3]">
+                  <img
+                    src={
+                      principais[0].images?.[0] ||
+                      "https://via.placeholder.com/600x400?text=Sem+imagem"
+                    }
+                    alt={principais[0].title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
                 <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end p-6">
                   <h2 className="text-3xl font-bold text-white leading-snug">
                     {principais[0].title}
@@ -207,16 +256,18 @@ export default function Home() {
                   <a
                     key={n.id}
                     href={`/news/${n.id}`}
-                    className="relative rounded-xl overflow-hidden shadow-md h-44"
+                    className="relative rounded-xl overflow-hidden shadow-md"
                   >
-                    <img
-                      src={
-                        n.images?.[0] ||
-                        "https://via.placeholder.com/400x200?text=Sem+imagem"
-                      }
-                      alt={n.title}
-                      className="w-full h-full object-cover"
-                    />
+                    <div className="w-full aspect-[16/9]">
+                      <img
+                        src={
+                          n.images?.[0] ||
+                          "https://via.placeholder.com/400x200?text=Sem+imagem"
+                        }
+                        alt={n.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                     <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end p-4">
                       <h3 className="text-white text-base font-bold leading-tight">
                         {n.title}
@@ -243,46 +294,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* === PUBLICIDADES === */}
-        {ads.length > 0 && (
-          <section className="max-w-6xl mx-auto mt-10 px-6">
-            <div className="flex items-center space-x-4 border-b border-gray-300 pb-2 mb-4">
-              <span className="text-gray-700 font-semibold cursor-pointer">
-                Publicidade
-              </span>
-            </div>
-
-            {/* Grid responsivo com cards maiores */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {ads.map((ad) => (
-                <a
-                  key={ad.id}
-                  href={ad.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block rounded-lg overflow-hidden shadow-lg bg-white hover:scale-105 transition-transform duration-200"
-                >
-                  <div className="w-full aspect-[4/3] md:aspect-[16/9] overflow-hidden">
-                    <img
-                      src={
-                        ad.image
-                          ? ad.image
-                          : "https://via.placeholder.com/400x300?text=Sem+imagem"
-                      }
-                      alt={ad.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-3">
-                    <p className="text-base font-semibold text-gray-800">
-                      {ad.title}
-                    </p>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </section>
-        )}
         {/* === PARCEIROS === */}
         {partners.length > 0 && (
           <section className="max-w-6xl mx-auto mt-10 px-6">
@@ -292,7 +303,6 @@ export default function Home() {
               </span>
             </div>
 
-            {/* Grid responsivo com cards maiores */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {partners.map((partner) => (
                 <a
@@ -305,9 +315,8 @@ export default function Home() {
                   <div className="w-full aspect-[4/3] md:aspect-[16/9] overflow-hidden">
                     <img
                       src={
-                        partner.image_url
-                          ? partner.image_url
-                          : "https://via.placeholder.com/400x300?text=Sem+imagem"
+                        partner.image_url ||
+                        "https://via.placeholder.com/400x300?text=Sem+imagem"
                       }
                       alt={partner.company_name}
                       className="w-full h-full object-cover"
@@ -324,6 +333,7 @@ export default function Home() {
           </section>
         )}
       </main>
+
       <Footer />
     </div>
   );
