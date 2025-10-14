@@ -112,11 +112,11 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      <main className="flex-grow max-w-full sm:max-w-6xl mx-auto p-4 sm:p-6">
-        {/* === PUBLICIDADE === */}
+      <main className="flex-grow max-w-6xl mx-auto p-6">
+        {/* === PUBLICIDADE (CARROSSEL) === */}
         {ads.length > 0 && (
-          <section className="mb-8">
-            <div className="flex items-center space-x-2 border-b border-gray-300 pb-2 mb-4">
+          <section className="mb-10">
+            <div className="flex items-center space-x-4 border-b border-gray-300 pb-2 mb-4">
               <span className="text-gray-700 font-semibold cursor-pointer">
                 Publicidade
               </span>
@@ -127,15 +127,12 @@ export default function Home() {
               navigation
               autoplay={{ delay: 4000 }}
               loop
-              spaceBetween={16}
+              spaceBetween={20}
               slidesPerView={1}
               breakpoints={{
-                320: { slidesPerView: 1 },
-                480: { slidesPerView: 1 },
                 640: { slidesPerView: 1 },
                 768: { slidesPerView: 2 },
                 1024: { slidesPerView: 3 },
-                1280: { slidesPerView: 4 },
               }}
               className="rounded-xl shadow-md overflow-hidden"
             >
@@ -145,7 +142,7 @@ export default function Home() {
                     href={ad.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block rounded-lg overflow-hidden shadow-md"
+                    className="block bg-white rounded-lg overflow-hidden shadow-md"
                   >
                     <div className="w-full aspect-[16/9]">
                       <img
@@ -154,7 +151,7 @@ export default function Home() {
                           "https://via.placeholder.com/1200x400?text=Publicidade"
                         }
                         alt={ad.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover bg-white"
                       />
                     </div>
                   </a>
@@ -165,14 +162,14 @@ export default function Home() {
         )}
 
         {/* === FILTROS === */}
-        <div className="bg-gray-100 p-3 rounded-xl mb-6 shadow-sm overflow-x-auto">
-          <div className="flex flex-wrap gap-3 min-w-[320px]">
+        <div className="bg-gray-100 p-4 rounded-xl mb-8 shadow-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
             <select
               value={selectedRegion}
               onChange={(e) =>
                 setSelectedRegion(e.target.value ? Number(e.target.value) : "")
               }
-              className="p-2 rounded-md border border-gray-300 flex-1 min-w-[140px]"
+              className="p-2 rounded-md border border-gray-300"
             >
               <option value="">Todas as regiões</option>
               {regions.map((r) => (
@@ -188,7 +185,7 @@ export default function Home() {
                 setSelectedCity(e.target.value ? Number(e.target.value) : "")
               }
               disabled={!selectedRegion}
-              className="p-2 rounded-md border border-gray-300 flex-1 min-w-[140px]"
+              className="p-2 rounded-md border border-gray-300"
             >
               <option value="">Todas as cidades</option>
               {cities.map((c) => (
@@ -202,13 +199,13 @@ export default function Home() {
               type="date"
               value={dataInicio}
               onChange={(e) => setDataInicio(e.target.value)}
-              className="p-2 rounded-md border border-gray-300 flex-1 min-w-[120px]"
+              className="p-2 rounded-md border border-gray-300"
             />
             <input
               type="date"
               value={dataFim}
               onChange={(e) => setDataFim(e.target.value)}
-              className="p-2 rounded-md border border-gray-300 flex-1 min-w-[120px]"
+              className="p-2 rounded-md border border-gray-300"
             />
 
             <button
@@ -219,7 +216,7 @@ export default function Home() {
                 setDataFim("");
                 setBusca("");
               }}
-              className="bg-black text-white rounded-md p-2 font-semibold hover:bg-gray-800 transition-colors flex-1 min-w-[120px]"
+              className="bg-black text-white rounded-md p-2 font-semibold hover:bg-gray-800"
             >
               Limpar filtros
             </button>
@@ -227,7 +224,7 @@ export default function Home() {
         </div>
 
         {/* === DESTAQUES === */}
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {principais.length > 0 && (
             <>
               <a
@@ -244,17 +241,17 @@ export default function Home() {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end p-4 sm:p-6">
-                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white leading-snug">
+                <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end p-6">
+                  <h2 className="text-3xl font-bold text-white leading-snug">
                     {principais[0].title}
                   </h2>
-                  <p className="text-yellow-400 text-xs sm:text-sm font-semibold mt-1">
+                  <p className="text-yellow-400 text-sm font-semibold mt-2">
                     {principais[0].category}
                   </p>
                 </div>
               </a>
 
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-6">
                 {principais.slice(1, 3).map((n) => (
                   <a
                     key={n.id}
@@ -271,8 +268,8 @@ export default function Home() {
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end p-3">
-                      <h3 className="text-white text-sm sm:text-base font-bold leading-tight">
+                    <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end p-4">
+                      <h3 className="text-white text-base font-bold leading-tight">
                         {n.title}
                       </h3>
                       <p className="text-yellow-400 text-xs font-semibold">
@@ -287,7 +284,7 @@ export default function Home() {
         </section>
 
         {/* === CONTEÚDO PRINCIPAL + SIDEBAR === */}
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <NewsList noticias={restantes} />
           </div>
@@ -299,14 +296,14 @@ export default function Home() {
 
         {/* === PARCEIROS === */}
         {partners.length > 0 && (
-          <section className="max-w-full sm:max-w-6xl mx-auto mt-8 px-2 sm:px-4">
-            <div className="flex items-center space-x-2 border-b border-gray-300 pb-2 mb-4">
+          <section className="max-w-6xl mx-auto mt-10 px-6">
+            <div className="flex items-center space-x-4 border-b border-gray-300 pb-2 mb-4">
               <span className="text-gray-700 font-semibold cursor-pointer">
                 Parceiros
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {partners.map((partner) => (
                 <a
                   key={partner.id}
