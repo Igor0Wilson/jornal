@@ -111,65 +111,67 @@ export default function Home() {
   const restantes = noticiasOrdenadas.slice(3);
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      <main className="flex-grow max-w-6xl mx-auto p-6">
+    <div className="flex flex-col min-h-screen bg-white overflow-x-hidden">
+      <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 overflow-x-hidden">
         {/* === PUBLICIDADE (CARROSSEL) === */}
         {ads.length > 0 && (
-          <section className="mb-10">
+          <section className="mb-10 w-full">
             <div className="flex items-center space-x-4 border-b border-gray-300 pb-2 mb-4">
               <span className="text-gray-700 font-semibold cursor-pointer">
                 Publicidade
               </span>
             </div>
 
-            <Swiper
-              modules={[Navigation, Autoplay]}
-              navigation
-              autoplay={{ delay: 4000 }}
-              loop
-              spaceBetween={20}
-              slidesPerView={1}
-              breakpoints={{
-                640: { slidesPerView: 1 },
-                768: { slidesPerView: 2 },
-                1024: { slidesPerView: 3 },
-              }}
-              className="rounded-xl shadow-md overflow-hidden"
-            >
-              {ads.map((ad) => (
-                <SwiperSlide key={ad.id}>
-                  <a
-                    href={ad.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block bg-white rounded-lg overflow-hidden shadow-md"
-                  >
-                    <div className="w-full aspect-[16/9]">
-                      <img
-                        src={
-                          ad.image ||
-                          "https://via.placeholder.com/1200x400?text=Publicidade"
-                        }
-                        alt={ad.title}
-                        className="w-full h-full object-cover bg-white"
-                      />
-                    </div>
-                  </a>
-                </SwiperSlide>
-              ))}
-            </Swiper>
+            <div className="w-full">
+              <Swiper
+                modules={[Navigation, Autoplay]}
+                navigation
+                autoplay={{ delay: 4000 }}
+                loop
+                spaceBetween={16}
+                slidesPerView={1}
+                breakpoints={{
+                  640: { slidesPerView: 1 },
+                  768: { slidesPerView: 2 },
+                  1024: { slidesPerView: 3 },
+                }}
+                className="rounded-xl shadow-md overflow-hidden w-full"
+              >
+                {ads.map((ad) => (
+                  <SwiperSlide key={ad.id} className="flex justify-center">
+                    <a
+                      href={ad.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block bg-white rounded-lg overflow-hidden shadow-md w-full"
+                    >
+                      <div className="w-full aspect-video">
+                        <img
+                          src={
+                            ad.image ||
+                            "https://via.placeholder.com/1200x400?text=Publicidade"
+                          }
+                          alt={ad.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    </a>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </div>
           </section>
         )}
 
         {/* === FILTROS === */}
-        <div className="bg-gray-100 p-4 rounded-xl mb-8 shadow-sm">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="bg-gray-100 p-4 rounded-xl mb-8 shadow-sm w-full overflow-x-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 min-w-[300px]">
             <select
               value={selectedRegion}
               onChange={(e) =>
                 setSelectedRegion(e.target.value ? Number(e.target.value) : "")
               }
-              className="p-2 rounded-md border border-gray-300"
+              className="p-2 rounded-md border border-gray-300 w-full"
             >
               <option value="">Todas as regiões</option>
               {regions.map((r) => (
@@ -185,7 +187,7 @@ export default function Home() {
                 setSelectedCity(e.target.value ? Number(e.target.value) : "")
               }
               disabled={!selectedRegion}
-              className="p-2 rounded-md border border-gray-300"
+              className="p-2 rounded-md border border-gray-300 w-full disabled:opacity-60"
             >
               <option value="">Todas as cidades</option>
               {cities.map((c) => (
@@ -199,13 +201,13 @@ export default function Home() {
               type="date"
               value={dataInicio}
               onChange={(e) => setDataInicio(e.target.value)}
-              className="p-2 rounded-md border border-gray-300"
+              className="p-2 rounded-md border border-gray-300 w-full"
             />
             <input
               type="date"
               value={dataFim}
               onChange={(e) => setDataFim(e.target.value)}
-              className="p-2 rounded-md border border-gray-300"
+              className="p-2 rounded-md border border-gray-300 w-full"
             />
 
             <button
@@ -216,7 +218,7 @@ export default function Home() {
                 setDataFim("");
                 setBusca("");
               }}
-              className="bg-black text-white rounded-md p-2 font-semibold hover:bg-gray-800"
+              className="bg-black text-white rounded-md p-2 font-semibold hover:bg-gray-800 w-full"
             >
               Limpar filtros
             </button>
@@ -231,7 +233,7 @@ export default function Home() {
                 href={`/news/${principais[0].id}`}
                 className="lg:col-span-2 relative rounded-xl overflow-hidden shadow-md"
               >
-                <div className="w-full aspect-[16/9] lg:aspect-[4/3]">
+                <div className="w-full aspect-video lg:aspect-[4/3]">
                   <img
                     src={
                       principais[0].images?.[0] ||
@@ -242,7 +244,7 @@ export default function Home() {
                   />
                 </div>
                 <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end p-6">
-                  <h2 className="text-3xl font-bold text-white leading-snug">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-white leading-snug">
                     {principais[0].title}
                   </h2>
                   <p className="text-yellow-400 text-sm font-semibold mt-2">
@@ -258,7 +260,7 @@ export default function Home() {
                     href={`/news/${n.id}`}
                     className="relative rounded-xl overflow-hidden shadow-md"
                   >
-                    <div className="w-full aspect-[16/9]">
+                    <div className="w-full aspect-video">
                       <img
                         src={
                           n.images?.[0] ||
@@ -296,7 +298,7 @@ export default function Home() {
 
         {/* === PARCEIROS === */}
         {partners.length > 0 && (
-          <section className="max-w-6xl mx-auto mt-10 px-6">
+          <section className="max-w-7xl mx-auto mt-10 px-4 sm:px-6">
             <div className="flex items-center space-x-4 border-b border-gray-300 pb-2 mb-4">
               <span className="text-gray-700 font-semibold cursor-pointer">
                 Parceiros
@@ -312,7 +314,7 @@ export default function Home() {
                   rel="noopener noreferrer"
                   className="block rounded-lg overflow-hidden shadow-lg bg-white hover:scale-105 transition-transform duration-200"
                 >
-                  <div className="w-full aspect-[4/3] md:aspect-[16/9] overflow-hidden">
+                  <div className="w-full aspect-[4/3] md:aspect-video overflow-hidden">
                     <img
                       src={
                         partner.image_url ||
@@ -323,7 +325,7 @@ export default function Home() {
                     />
                   </div>
                   <div className="p-3">
-                    <p className="text-base font-semibold text-gray-800">
+                    <p className="text-base font-semibold text-gray-800 text-center">
                       {partner.company_name}
                     </p>
                   </div>
